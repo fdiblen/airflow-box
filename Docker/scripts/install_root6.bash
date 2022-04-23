@@ -27,8 +27,8 @@ cmake \
     -Dpython3=ON -DPYTHON_EXECUTABLE=${SYSTEM_PYTHON3} \
     ../${pkgname}-${pkgver}
 
-make -j4
-make install && rm -rf ${srcdir}
+make -j10
+make install
 
 # export ROOTSYS=${insdir}
 # export PATH=$PATH:$ROOTSYS/bin

@@ -3,8 +3,8 @@ USER root
 
 # Tools
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
-         wget curl
+    && apt-get install -y --no-install-recommends \
+    wget curl git
 
 # Geant4 dependencies
 RUN apt-get install -y --no-install-recommends \
@@ -19,16 +19,19 @@ RUN apt-get install -y --no-install-recommends \
 
 # Clean up
 RUN apt-get autoremove -yqq --purge \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 USER airflow
 WORKDIR /home/airflow/
 
-COPY ./scripts /home/airflow/scripts/
-RUN mkdir -p /home/airflow/software && cd /home/airflow/software && \
-  bash /home/airflow/scripts/install_geant4.bash
+COPY ./scripts /tmp/scripts/
+RUN mkdir -p /home/airflow/software
 RUN cd /home/airflow/software && \
-  bash /home/airflow/scripts/install_root6.bash
-RUN rm -rf /home/airflow/scripts
-
+    bash /tmp/scripts/install_geant4.bash
+RUN cd /home/airflow/software && \
+    bash /tmp/scripts/install_root6.bash
+RUN rm -rfv \
+    /home/airflow/software/root/src \
+    /home/airflow/software/geant4/src \
+    /tmp/scripts

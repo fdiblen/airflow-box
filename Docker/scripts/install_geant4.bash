@@ -35,5 +35,5 @@ cmake \
     -DGEANT4_USE_SYSTEM_ZLIB=OFF \
     ../${pkgname}.${pkgver}
 
-G4VERBOSE=1 make -j4
-make install && rm -rf ${srcdir}
+G4VERBOSE=1 make -j10
+make install
