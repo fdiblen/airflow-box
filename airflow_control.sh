@@ -13,13 +13,20 @@ prepare() {
   docker-compose pull
 }
 
+update_compose() {
+  echo -e "\nRunning update_compose()"
+  sudo cp /usr/bin/docker-compose /usr/bin/docker-compose_old
+  sudo curl -L "https://github.com/docker/compose/releases/download/v2.4.1/docker-compose-linux-x86_64" -o /usr/bin/docker-compose
+  sudo chmod +x /usr/bin/docker-compose
+}
+
 start() {
   echo -e "\nRunning start()"
   export AIRFLOW_UID=1000
   prepare
   mkdir -p ./dags ./logs ./plugins
   echo -e "AIRFLOW_UID=$(id -u)" > .env
-  docker-compose -f docker-compose.yaml up
+  docker-compose -f docker-compose.yaml up -d
   echo "
   # Flower UI  : http://192.168.178.77:5555
   # Airflow UI : http://192.168.178.77:8080/home
