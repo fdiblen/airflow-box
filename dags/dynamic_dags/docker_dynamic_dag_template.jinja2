@@ -5,9 +5,7 @@ from docker.types import Mount
 
 from airflow import DAG
 from airflow.decorators import task, dag
-from airflow.operators.bash_operator import BashOperator
 from airflow.operators.docker_operator import DockerOperator
-from airflow.operators.python_operator import BranchPythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 
 
@@ -23,12 +21,6 @@ default_args = {
     'mount_tmp_dir'         : False,
 }
 
-def checkIfRepoAlreadyCloned():
-    if os.path.exists('/home/airflow/test/.git'):
-        return 'dummy'
-    return 'git_clone'
-
-
 with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
     default_args=default_args,
     schedule_interval="{{ schedule_interval }}",
@@ -37,22 +29,6 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
     @task
     def dummy():
         pass
-
-    task_check_repo = BranchPythonOperator(
-        task_id='is_repo_exists',
-        python_callable=checkIfRepoAlreadyCloned
-    )
-
-    task_git_clone = BashOperator(
-        task_id='git_clone',
-        bash_command='git clone https://github.com/fdiblen/test-airflow.git /home/airflow/test-airflow'
-    )
-
-    task_git_pull = BashOperator(
-        task_id='git_pull',
-        bash_command='cd /home/airflow/test-airflow && git pull',
-        trigger_rule='one_success'
-    )
 
     # https://airflow.apache.org/docs/apache-airflow/1.10.13/_api/airflow/operators/docker_operator/index.html
     # https://github.com/apache/airflow/tree/main/airflow/providers/docker/example_dags
@@ -86,10 +62,5 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
             Mount(source="/home/fdiblen/airflow", target="/data", type="bind"),
         ],
     )
-
-    # task_check_repo >> task_git_clone
-    # # task_check_repo >> task_dummy >> task_git_pull
-    # task_git_clone >> task_git_pull
-    # task_git_pull >> task_docker
 
     dummy() >> task_docker

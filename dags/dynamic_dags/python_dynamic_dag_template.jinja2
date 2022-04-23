@@ -1,0 +1,43 @@
+import os.path
+from datetime import datetime, timedelta
+
+from docker.types import Mount
+
+from airflow import DAG
+from airflow.decorators import task, dag
+from airflow.operators.python_operator import BranchPythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+
+
+default_args = {
+    'owner'                 : 'airflow',
+    'description'           : 'DockerOperator {{ description }}',
+    'depend_on_past'        : False,
+    'start_date'            : datetime(2022,4, 22),
+    'email_on_failure'      : False,
+    'email_on_retry'        : False,
+    'retries'               : 0,
+    'retry_delay'           : timedelta(minutes=1),
+    'mount_tmp_dir'         : False,
+}
+
+def checkIfFolderExists():
+    if os.path.exists('/home/airflow'):
+        return 'dummy'
+    return 'git_clone'
+
+with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
+    default_args=default_args,
+    schedule_interval="{{ schedule_interval }}",
+    catchup={{ catchup or False }} ) as dag:
+
+    @task
+    def dummy():
+        pass
+
+    task_python_check_folder = BranchPythonOperator(
+        task_id='is_folder_exists',
+        python_callable=checkIfFolderExists
+    )
+
+    dummy() >> task_python_check_folder
