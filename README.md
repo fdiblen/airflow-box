@@ -25,13 +25,10 @@ Clean up
 ./airflow_control.sh --clean
 ```
 
-## Dashboard
+## Dashboard URLs
 
 Flower UI  : <http://192.168.178.77:5555>
 
-Airflow UI : <http://192.168.178.77:8080/home>
-
-username : airflow
-password : airflow
+Airflow UI : <http://192.168.178.77:8080/home> (username : airflow password : airflow)
 
 Docker dags: <http://192.168.178.77:8080/home?search=docker>
