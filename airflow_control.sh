@@ -27,12 +27,14 @@ start() {
   mkdir -p ./dags ./logs ./plugins
   echo -e "AIRFLOW_UID=$(id -u)" > .env
   docker-compose -f docker-compose.yaml up -d
+  ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  ip6=$(/sbin/ip -o -6 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
   echo "
-  # Flower UI  : http://192.168.178.77:5555
-  # Airflow UI : http://192.168.178.77:8080/home
+  # Flower UI  : http://${ip4}:5555
+  # Airflow UI : http://${ip4}:8080/home
     # username : airflow
     # password : airflow
-  # Docker dags: http://192.168.178.77:8080/home?search=docker
+  # Docker dags: http://${ip4}:8080/home?search=docker
   "
 }
 
