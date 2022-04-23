@@ -45,7 +45,7 @@ test() {
 clean() {
   echo -e "\nRunning clean()"
   docker-compose down --remove-orphans --volumes --rmi all
-  [ $(docker ps -a -q) ] && docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
+  docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
   docker rmi -f $(docker images -q)
   docker network prune --force
   docker volume prune --force
