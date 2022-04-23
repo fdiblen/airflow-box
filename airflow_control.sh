@@ -7,9 +7,16 @@ download() {
   curl -LfO 'https://airflow.apache.org/docs/apache-airflow/2.2.5/docker-compose.yaml'
 }
 
+prepare() {
+  echo -e "\nRunning prepare()"
+  docker-compose build
+  docker-compose pull
+}
+
 start() {
   echo -e "\nRunning start()"
   export AIRFLOW_UID=1000
+  prepare
   mkdir -p ./dags ./logs ./plugins
   echo -e "AIRFLOW_UID=$(id -u)" > .env
   docker-compose -f docker-compose.yaml up
@@ -39,7 +46,7 @@ clean() {
   echo -e "\nRunning clean()"
   docker-compose down --remove-orphans --volumes --rmi all
   [ $(docker ps -a -q) ] && docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
-  [ $(docker images -q) ] && docker rmi -f $(docker images -q)
+  docker rmi -f $(docker images -q)
   docker network prune --force
   docker volume prune --force
   rm -rf logs plugins venv
