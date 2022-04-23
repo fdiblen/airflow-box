@@ -27,7 +27,10 @@ WORKDIR /home/airflow/
 
 COPY ./scripts /home/airflow/scripts/
 RUN mkdir -p /home/airflow/software && cd /home/airflow/software && \
-  bash /home/airflow/scripts/install_geant4.bash && \
-  bash /home/airflow/scripts/install_root6.bash && \
-  rm -rf /home/airflow/scripts
+  bash /home/airflow/scripts/install_geant4.bash
+
+RUN cd /home/airflow/software && \
+  bash /home/airflow/scripts/install_root6.bash
+
+RUN rm -rf /home/airflow/scripts
 
