@@ -8,11 +8,11 @@ download() {
 }
 
 start() {
-  # echo -e "\nRunning start()"
-  # export AIRFLOW_UID=1000
-  # mkdir -p ./dags ./logs ./plugins
-  # echo -e "AIRFLOW_UID=$(id -u)" > .env
-  # docker-compose -f docker-compose.yaml up
+  echo -e "\nRunning start()"
+  export AIRFLOW_UID=1000
+  mkdir -p ./dags ./logs ./plugins
+  echo -e "AIRFLOW_UID=$(id -u)" > .env
+  docker-compose -f docker-compose.yaml up
   echo "
   # Flower UI  : http://192.168.178.77:5555
   # Airflow UI : http://192.168.178.77:8080/home
