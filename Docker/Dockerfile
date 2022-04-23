@@ -17,11 +17,6 @@ RUN apt-get install -y --no-install-recommends \
     dpkg-dev cmake g++ gcc binutils \
     libx11-dev libxpm-dev libxft-dev libxext-dev libssl-dev libpng-dev libjpeg-dev
 
-# Clean up
-RUN apt-get autoremove -yqq --purge \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 USER airflow
 WORKDIR /home/airflow/
 
@@ -31,7 +26,16 @@ RUN cd /home/airflow/software && \
     bash /tmp/scripts/install_geant4.bash
 RUN cd /home/airflow/software && \
     bash /tmp/scripts/install_root6.bash
-RUN rm -rfv \
+
+# Clean up with root user
+USER root
+RUN rm -rf \
     /home/airflow/software/root/src \
     /home/airflow/software/geant4/src \
     /tmp/scripts
+
+RUN apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+USER airflow
