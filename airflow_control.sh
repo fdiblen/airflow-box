@@ -89,6 +89,12 @@ generate_dags() {
   python dags/dynamic_dags/generator.py
 }
 
+get_shell() {
+  echo -e "\nRunning get_shell()"
+  docker run --rm -ti --name airflow_tmp \
+    --entrypoint bash airflow_airflow-worker:latest
+}
+
 help() {
   printf "\nUsage:\n"
   printf "$0
@@ -97,6 +103,7 @@ help() {
     [--generate|-g]
     [[--pip|-p] '<package1><package2>']
     [--setuppy|--py]
+    [--shell]
     [--start]
     [--stop]
     [--test|-t]
@@ -136,6 +143,10 @@ main() {
         install_pip_package ${2}
         shift
         ;;
+      --shell|--sh)
+        export shell_option=1
+        get_shell
+        ;;
       --setuppy|--py)
         export py_option=1
         setup_python
@@ -172,6 +183,7 @@ main() {
     echo "  generate_option: ${generate_option}"
     echo "  pip_option     : ${pip_option}"
     echo "  py_option      : ${py_option}"
+    echo "  shell_option   : ${shell_option}"
     echo "  start_option   : ${start_option}"
     echo "  stop_option    : ${stop_option}"
     echo "  test_option    : ${test_option}"
