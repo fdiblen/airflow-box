@@ -18,11 +18,13 @@ tar xvf root*source.tar.gz
 [ -d ${srcdir}/build ] || mkdir ${srcdir}/build
 cd ${srcdir}/build
 
+SYSTEM_PYTHON3=$(which python3)
+
 cmake \
     -DCMAKE_INSTALL_PREFIX=${insdir} \
     -Dgnuinstall=ON \
     -Droofit=OFF \
-    -Dpython3=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+    -Dpython3=ON -DPYTHON_EXECUTABLE=${SYSTEM_PYTHON3} \
     ../${pkgname}-${pkgver}
 
 make -j4
