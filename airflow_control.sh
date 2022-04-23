@@ -22,6 +22,12 @@ start() {
   "
 }
 
+
+stop() {
+  echo -e "\nRunning stop()"
+  docker-compose down --remove-orphans --volumes
+}
+
 test() {
   echo -e "\nRunning test()"
   ENDPOINT_URL="http://localhost:8080/"
@@ -30,14 +36,14 @@ test() {
       "${ENDPOINT_URL}/api/v1/pools"
 }
 
-clean_docker() {
-  echo -e "\nRunning clean_docker()"
-  docker-compose down --remove-orphans --volumes
+clean() {
+  echo -e "\nRunning clean()"
+  docker-compose down --remove-orphans --volumes --rmi
   docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
   docker rmi -f $(docker images -q)
   docker network rm $(docker network ls -q)
   docker volume rm $(docker volume ls -q)
-  ##rm -rf dags logs  plugins
+  rm -rf logs  plugins venv
 }
 
 setup_python() {
@@ -84,7 +90,8 @@ help() {
     [--generate|-g]
     [[--pip|-p] '<package1><package2>']
     [--setuppy|--py]
-    [--start|--s]
+    [--start]
+    [--stop]
     [--test|-t]
     [--verbose|-v]\n"
   exit 1
@@ -101,7 +108,7 @@ main() {
     case "$1" in
       --clean|-c)
         export clean_option=1
-        clean_docker
+        clean
         ;;
       --download|-d)
         export download_option=1
@@ -121,9 +128,13 @@ main() {
         export py_option=1
         setup_python
         ;;
-      --start|-s)
+      --start)
         export start_option=1
         start
+        ;;
+      --stop)
+        export stop_option=1
+        stop
         ;;
       --test|-t)
         export test_option=1
@@ -148,6 +159,7 @@ main() {
     echo "pip_option: ${pip_option}"
     echo "py_option: ${py_option}"
     echo "start_option: ${start_option}"
+    echo "stop_option: ${stop_option}"
     echo "test_option: ${test_option}"
     echo "verbose_option: ${verbose_option}"
     echo
