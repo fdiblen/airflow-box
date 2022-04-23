@@ -22,7 +22,6 @@ start() {
   "
 }
 
-
 stop() {
   echo -e "\nRunning stop()"
   docker-compose down --remove-orphans --volumes
@@ -38,12 +37,13 @@ test() {
 
 clean() {
   echo -e "\nRunning clean()"
-  docker-compose down --remove-orphans --volumes --rmi
-  docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
-  docker rmi -f $(docker images -q)
-  docker network rm $(docker network ls -q)
-  docker volume rm $(docker volume ls -q)
-  rm -rf logs  plugins venv
+  docker-compose down --remove-orphans --volumes --rmi all
+  [ $(docker ps -a -q) ] && docker stop $(docker ps -a -q) && docker rm -f $(docker ps -a -q)
+  [ $(docker images -q) ] && docker rmi -f $(docker images -q)
+  docker network prune --force
+  docker volume prune --force
+  rm -rf logs plugins venv
+  rm -rf dags/__pycache__ dags/dynamic_dags/__pycache__
 }
 
 setup_python() {
@@ -98,12 +98,17 @@ help() {
 }
 
 main() {
-  echo -e "\nAirflow control script\n"
 
   if [ $# -eq 0 ]; then
       help
   fi
 
+  echo -e "\nAirflow control script\n"
+
+  # global variables
+  export AIRFLOW_UID=1000
+
+  # get cli arguments
   while [ $# -gt 0 ]; do
     case "$1" in
       --clean|-c)
@@ -144,24 +149,26 @@ main() {
         export verbose_option=1
         ;;
       *)
-        printf "ERROR: Invalid parameters.\n"
+        printf "Invalid parameter: $1\n"
         help
     esac
     shift
   done
 
+  # show variables in verbose mode
   if [ "$verbose_option" = "1" ];
   then
     echo
-    echo "clean_option: ${clean_option}"
-    echo "download_option: ${download_option}"
-    echo "generate_option: ${generate_option}"
-    echo "pip_option: ${pip_option}"
-    echo "py_option: ${py_option}"
-    echo "start_option: ${start_option}"
-    echo "stop_option: ${stop_option}"
-    echo "test_option: ${test_option}"
-    echo "verbose_option: ${verbose_option}"
+    echo "SCRIPT VARIABLES"
+    echo "  clean_option   : ${clean_option}"
+    echo "  download_option: ${download_option}"
+    echo "  generate_option: ${generate_option}"
+    echo "  pip_option     : ${pip_option}"
+    echo "  py_option      : ${py_option}"
+    echo "  start_option   : ${start_option}"
+    echo "  stop_option    : ${stop_option}"
+    echo "  test_option    : ${test_option}"
+    echo "  verbose_option : ${verbose_option}"
     echo
   fi
 }
