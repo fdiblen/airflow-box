@@ -19,7 +19,8 @@ default_args = {
     'email_on_failure'      : False,
     'email_on_retry'        : False,
     'retries'               : 0,
-    'retry_delay'           : timedelta(minutes=1)
+    'retry_delay'           : timedelta(minutes=1),
+    'mount_tmp_dir'         : False,
 }
 
 def checkIfRepoAlreadyCloned():
@@ -57,7 +58,8 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
     # https://github.com/apache/airflow/tree/main/airflow/providers/docker/example_dags
     task_docker = DockerOperator(
         task_id='docker_command',
-        image='ubuntu:latest',
+        # image='ubuntu:latest',
+        image='ptsim:latest',
         api_version='auto',
         auto_remove=True,
         environment={
@@ -67,11 +69,12 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
         command=[
             "/bin/bash",
             "-c",
-            "/bin/sleep 10; "
-            "ls /; "
-            "ls /data; "
-            "env; "
             "/bin/echo 'material:{{ params.material }} energy:{{ params.energy }}'; ",
+            "env; ",
+            ". /home/airflow/software/root/6.24.00/bin/thisroot.sh; ",
+            "env; ",
+            "root-config --cflags; ",
+            "root.exe -a -q; ",
         ],
         # docker_url='unix://var/run/docker.sock',
         docker_url='tcp://docker-proxy:2375',
