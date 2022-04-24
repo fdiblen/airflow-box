@@ -1,5 +1,6 @@
 dags/generated_*.py
 logs/
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
