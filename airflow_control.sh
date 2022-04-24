@@ -115,9 +115,31 @@ read_env_file() {
   fi
 }
 
+set_cli_completions() {
+  echo -e "\nRunning set_cli_completions()"
+  echo 'complete -W "
+    --completions
+    --clean
+    --download
+    --generate
+    --pip
+    --setuppy
+    --shell
+    --start
+    --stop
+    --test
+    --verbose
+  "' $0 > .completions.bash
+  echo -e "Run:\n
+    . ./.completions.bash
+  "
+}
+
+
 help() {
   printf "\nUsage:\n"
   printf "$0
+    [--completions]
     [--clean|-c]
     [--download|-d]
     [--generate|-g]
@@ -147,6 +169,10 @@ main() {
       --clean|-c)
         export clean_option=1
         clean
+        ;;
+      --completions)
+        export completions_option=1
+        set_cli_completions $0
         ;;
       --download|-d)
         export download_option=1
