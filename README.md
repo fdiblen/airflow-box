@@ -1,6 +1,6 @@
 # Airflow-box
 
-Example repository to show how to use Apache Airflow with DockerOperator.
+Example repository to show how to use Apache Airflow with DockerOperator and generate dynamic DAGs.
 
 ## Instructions
 
