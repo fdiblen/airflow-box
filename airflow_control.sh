@@ -94,6 +94,7 @@ install_pip_package() {
 
 generate_dags() {
   echo -e "\nRunning generate_dags()"
+  setup_python
   . ./venv/bin/activate
   python dags/dynamic_dags/generator.py
 }
@@ -121,7 +122,6 @@ help() {
 }
 
 main() {
-
   if [ $# -eq 0 ]; then
       help
   fi
