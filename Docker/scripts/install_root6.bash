@@ -25,6 +25,7 @@ cmake \
     -Dgnuinstall=ON \
     -Droofit=OFF \
     -Dxrootd=OFF -Dbuiltin_xrootd=OFF \
+    -Dclad=OFF \
     -Dpython3=ON -DPYTHON_EXECUTABLE=${SYSTEM_PYTHON3} \
     ../${pkgname}-${pkgver}
 
