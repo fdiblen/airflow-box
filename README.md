@@ -1,6 +1,6 @@
 # Airflow-box
 
-Apache Airflow Experiments
+Example repository to show how to use Apache Airflow with DockerOperator.
 
 ## Instructions
 
@@ -27,8 +27,8 @@ Clean up
 
 ## Dashboard URLs
 
-Flower UI  : <http://192.168.178.77:5555>
+Flower UI  : <http://SERVER_IP:5555>
 
-Airflow UI : <http://192.168.178.77:8080/home> (username : airflow password : airflow)
+Airflow UI : <http://SERVER_IP:8080/home> (username : airflow password : airflow)
 
-Docker dags: <http://192.168.178.77:8080/home?search=docker>
+Docker dags: <http://SERVER_IP:8080/home?search=docker>
