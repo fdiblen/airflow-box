@@ -1,0 +1,97 @@
+FROM archlinux:base-devel-20220410.0.52530
+
+LABEL maintainer="fdiblen"
+ENV container docker
+ENV LC_ALL en_US.UTF-8
+USER root
+
+RUN date >/build-date.txt
+ARG BUILD_DATE
+LABEL org.label-schema.build-date=$BUILD_DATE
+
+
+# PACKAGES
+#===========================================
+RUN rm -f /etc/localtime && \
+    ln -s /usr/share/zoneinfo/Europe/Amsterdam /etc/localtime
+
+RUN pacman -Syyuu --noconfirm && \
+    pacman -S --noconfirm --needed \
+    binutils gcc fakeroot make base-devel go sudo \
+    wget rsync unzip git vim vim-plugins bash pacman-contrib
+
+
+# ADD airflow USER
+#===========================================
+RUN groupadd --gid 1001 airflow && \
+    useradd -ms /bin/bash -g airflow -G users,wheel airflow && \
+    echo "airflow:airflow" | chpasswd && \
+    echo "airflow user:";  su - airflow -c id
+
+RUN \
+    sed -i /etc/sudoers -re 's/^%wheel.*/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/g' && \
+    sed -i /etc/sudoers -re 's/^root.*/root ALL=(ALL:ALL) NOPASSWD: ALL/g' && \
+    sed -i /etc/sudoers -re 's/^#includedir.*/## **Removed the include directive** ##"/g' && \
+    echo "airflow ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    echo "Customized the sudoers file for passwordless access to the airflow user!"
+
+
+# SWITCH TO airflow USER
+#===========================================
+USER airflow
+WORKDIR /home/airflow
+RUN chown airflow:airflow -R /home/airflow
+
+
+# ENVIRONMENT
+#===========================================
+ENV HOME /home/airflow
+ENV DISPLAY :0
+ENV EDITOR vim
+ENV TERM xterm-256color
+ENV USER airflow
+ENV GNUMAKEFLAGS=-j6
+
+
+# INSTALL AUR HELPER
+#===========================================
+RUN git clone https://aur.archlinux.org/yay.git && \
+    cd yay && makepkg -si --needed --noconfirm --ignorearch --cleanbuild --clean \
+    && cd && rm -rf .cache yay
+
+
+# INSTALL PACKAGES
+#===========================================
+RUN yay -Syy --noconfirm \
+    root python-uproot cern-vdt
+
+RUN mkdir -p /tmp/packages
+COPY ./packages/binary/*.pkg.* /tmp/packages/
+RUN sudo pacman -U --noconfirm /tmp/packages/*.pkg.* && sudo rm -rf /tmp/packages
+RUN echo ". /etc/profile.d/geant4.sh" >> /home/airflow/.bashrc && \
+    echo ". /etc/profile.d/geant4.sh" >> /home/airflow/.profile
+
+RUN yay -S --noconfirm --needed --batchinstall \
+    geant4-incldata geant4-ensdfstatedata geant4-abladata \
+    geant4-particlehpdata \
+    geant4-ledata geant4-neutronhpdata geant4-realsurfacedata \
+    geant4-piidata geant4-levelgammadata geant4-saiddata \
+    geant4-radioactivedata geant4-particlexsdata
+    # geant4-neutronxsdata
+RUN cp -iR /usr/share/Geant*/examples /home/airflow/g4-examples
+
+
+# BASH PROFILE
+#===========================================
+RUN echo ". /etc/profile.d/geant4.sh" >> ~/.bashrc
+
+
+# CLEAN UP
+#===========================================
+# RUN sudo pacman -Rs --noconfirm \
+#     gcc fakeroot make go binutils
+
+RUN sudo rm -rf /home/airflow/.cache/yay/* /var/cache/pacman/pkg/*
+RUN sudo pacman -Scc --noconfirm && cd && rm -rf .cache yay .config
+
+CMD ["/bin/bash"]

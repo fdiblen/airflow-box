@@ -30,7 +30,7 @@ RUN cd /home/airflow/software && \
     rm -rf /home/airflow/software/geant4/src
 RUN cd /home/airflow/software && \
     bash /tmp/scripts/install_root6.bash && \
-    /home/airflow/software/root/src
+    rm -rf /home/airflow/software/root/src
 
 # Clean up with root user
 USER root
