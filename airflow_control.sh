@@ -2,8 +2,8 @@
 
 # https://airflow.apache.org/docs/apache-airflow/stable/start/docker.html#docker-compose-yaml
 
-activate_python() {
-  echo -e "\nRunning activate_python()"
+activate_python_virtenv() {
+  echo -e "\nRunning activate_python_virtenv()"
   . ./venv/bin/activate
   which pip
 }
