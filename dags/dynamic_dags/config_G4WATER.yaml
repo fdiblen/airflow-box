@@ -1,6 +1,6 @@
 description: 'G4WATER Simulation'
 dag_id: 'G4WATER'
-schedule_interval: '@daily'
+schedule_interval: '@once'
 catchup: False
 params:
   energy: 100
