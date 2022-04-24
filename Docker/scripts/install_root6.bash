@@ -24,10 +24,11 @@ cmake \
     -DCMAKE_INSTALL_PREFIX=${insdir} \
     -Dgnuinstall=ON \
     -Droofit=OFF \
+    -Dxrootd=OFF -Dbuiltin_xrootd=OFF \
     -Dpython3=ON -DPYTHON_EXECUTABLE=${SYSTEM_PYTHON3} \
     ../${pkgname}-${pkgver}
 
-make -j10
+make -j2
 make install
 
 # export ROOTSYS=${insdir}
