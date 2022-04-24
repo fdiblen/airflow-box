@@ -8,7 +8,7 @@ insdir=$(pwd)/${pkgname}/${pkgver}
 
 [ -d ${srcdir} ] || mkdir -p ${srcdir}
 
-wget \
+wget --no-check-certificate \
     -P ${srcdir} \
     -c ${pkg_url}
 
