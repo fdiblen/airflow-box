@@ -17,13 +17,21 @@ Example repository to show how to use Apache Airflow with DockerOperator and gen
     ```shell
     ./airflow_control.sh --start
     ```
+3. Test Airflow setip
 
-3. Generating dynamic DAGS
+    ```shell
+    ./airflow_control.sh --test
+    ```
+
+## Dynamic DAGs
+
+To generate dynamic DAGS run:
 
     ```shell
     ./airflow_control.sh --setuppy
     ./airflow_control.sh --generate
     ```
+The dynamic DAGs will be saved under `dags` folder with name starting with `generated_`.
 
 ##  Clean up
 
