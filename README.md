@@ -1,25 +1,31 @@
-# Airflow-box
+# Airflow-box (WIP)
 
 Example repository to show how to use Apache Airflow with DockerOperator and generate dynamic DAGs.
 
 ## Instructions
 
-Initial Setup
+1. Initial Setup
 
-```shell
-chmod +x airflow_control.sh
-./airflow_control.sh --download
-./airflow_control.sh --start
-```
+    ```shell
+    chmod +x airflow_control.sh
+    ./airflow_control.sh --completions
+    . ./.completions.bash
+    ```
 
-Generating dynamic DAGS
+2. Start Airflow
 
-```shell
-./airflow_control.sh --setuppy
-./airflow_control.sh --generate
-```
+    ```shell
+    ./airflow_control.sh --start
+    ```
 
-Clean up
+3. Generating dynamic DAGS
+
+    ```shell
+    ./airflow_control.sh --setuppy
+    ./airflow_control.sh --generate
+    ```
+
+##  Clean up
 
 ```shell
 ./airflow_control.sh --clean
