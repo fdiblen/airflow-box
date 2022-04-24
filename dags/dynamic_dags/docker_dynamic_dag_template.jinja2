@@ -23,6 +23,7 @@ default_args = {
 
 with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
     default_args=default_args,
+    is_paused_upon_creation=False,
     schedule_interval="{{ schedule_interval }}",
     catchup={{ catchup or False }} ) as dag:
 
@@ -34,8 +35,8 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
     # https://github.com/apache/airflow/tree/main/airflow/providers/docker/example_dags
     task_docker = DockerOperator(
         task_id='docker_command',
-        # image='ubuntu:latest',
-        image='ptsim:latest',
+        image='ubuntu:22.04',
+        #image='ptsim:latest',
         api_version='auto',
         auto_remove=True,
         environment={
@@ -45,6 +46,8 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
         command=[
             "/bin/bash",
             "-c",
+            "ls -asltr /data/simulation_data/training/; ",
+            "du -shm /data/simulation_data/training/*; ",
             "/bin/echo 'material:{{ params.material }} energy:{{ params.energy }}'; ",
             "env; ",
             ". /home/airflow/software/root/6.24.00/bin/thisroot.sh; ",
@@ -59,7 +62,7 @@ with DAG(dag_id='generated_docker_dag_{{ dag_id }}',
         # retrieve_output=True,
         # retrieve_output_path='/data/log.txt',
         mounts=[
-            Mount(source="/home/fdiblen/airflow", target="/data", type="bind"),
+            Mount(source="/data", target="/data", type="bind"),
         ],
     )
 
