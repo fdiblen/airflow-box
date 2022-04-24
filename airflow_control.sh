@@ -107,6 +107,14 @@ get_shell() {
     --entrypoint bash airflow_airflow-worker:latest
 }
 
+read_env_file() {
+  echo -e "\nRunning read_env_file()"
+  # read local .env file and set environment variables
+  if [ -f .env ]; then
+      export $(grep -v '^#' .env | xargs)
+  fi
+}
+
 help() {
   printf "\nUsage:\n"
   printf "$0
@@ -130,8 +138,8 @@ main() {
 
   echo -e "\nAirflow control script\n"
 
-  # global variables
-  export AIRFLOW_UID=1000
+  # read .env file
+  read_env_file
 
   # get cli arguments
   while [ $# -gt 0 ]; do
