@@ -26,15 +26,15 @@ WORKDIR /home/airflow/
 COPY ./scripts /tmp/scripts/
 RUN mkdir -p /home/airflow/software
 RUN cd /home/airflow/software && \
-    bash /tmp/scripts/install_geant4.bash
+    bash /tmp/scripts/install_geant4.bash && \
+    rm -rf /home/airflow/software/geant4/src
 RUN cd /home/airflow/software && \
-    bash /tmp/scripts/install_root6.bash
+    bash /tmp/scripts/install_root6.bash && \
+    /home/airflow/software/root/src
 
 # Clean up with root user
 USER root
 RUN rm -rf \
-    /home/airflow/software/root/src \
-    /home/airflow/software/geant4/src \
     /tmp/scripts
 
 RUN apt-get autoremove -yqq --purge \
