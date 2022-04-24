@@ -45,7 +45,9 @@ stop() {
 
 test() {
   echo -e "\nRunning test()"
-  ENDPOINT_URL="http://localhost:8080/"
+  ip4=$(/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  ip6=$(/sbin/ip -o -6 addr list eth0 | awk '{print $4}' | cut -d/ -f1)
+  ENDPOINT_URL="http://${ip4}:8080/"
   curl -X GET  \
       --user "airflow:airflow" \
       "${ENDPOINT_URL}/api/v1/pools"
